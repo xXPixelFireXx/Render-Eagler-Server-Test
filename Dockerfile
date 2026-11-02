@@ -1,24 +1,21 @@
 FROM eclipse-temurin:17-jre-alpine
 
-# Install required system dependencies
+# Install curl, jq, and bash
 RUN apk add --no-cache curl jq bash
 
 WORKDIR /net
 
-# Environment variables
 ENV PORT=8080
-ENV EULA=true
 
-# Create server directory
-RUN mkdir -p /net/server
+# Create server structure
+RUN mkdir -p /net/plugins
 
-# Download the EaglerXBungee server jar
-RUN curl -L -o server.jar https://github.com/lax1dude/eaglercraftx-1.8/releases/download/v1.0.0/EaglerXBungee.jar
+# Download Waterfall (BungeeCord proxy)
+RUN curl -L -o /net/server.jar https://api.papermc.io/v2/projects/waterfall/versions/1.20/builds/556/downloads/waterfall-1.20-556.jar
 
-# Pre-accept the Minecraft EULA
-RUN echo "eula=true" > eula.txt
+# Download the unified EaglerXServer plugin directly into the plugins folder
+RUN curl -L -o /net/plugins/EaglerXServer.jar https://github.com/lax1dude/eaglerxserver/releases/download/v1.0.0/EaglerXServer.jar
 
-# Copy and configure the startup script
 COPY entrypoint.sh /net/entrypoint.sh
 RUN chmod +x /net/entrypoint.sh
 
